@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"aqwari.net/xml/xmltree"
+	"github.com/vedranvuk/go-xml/xmltree"
 )
 
 type blob map[string]interface{}

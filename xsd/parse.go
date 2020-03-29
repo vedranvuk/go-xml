@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"aqwari.net/xml/internal/dependency"
-	"aqwari.net/xml/xmltree"
+	"github.com/vedranvuk/go-xml/internal/dependency"
+	"github.com/vedranvuk/go-xml/xmltree"
 )
 
 func hasCycle(root *xmltree.Element, visited map[*xmltree.Element]struct{}) bool {
@@ -775,7 +775,8 @@ func parseElement(ns string, el *xmltree.Element) Element {
 			doc = doc.append(parseAnnotation(el))
 		}
 	})
-	t, ok := e.Type.(linkedType); if ok {
+	t, ok := e.Type.(linkedType)
+	if ok {
 		e.Name.Space = t.Space
 	}
 	e.Doc = string(doc)
@@ -858,11 +859,19 @@ func parseSimpleRestriction(root *xmltree.Element) Restriction {
 		case "enumeration":
 			r.Enum = append(r.Enum, el.Attr("", "value"))
 		case "minExclusive", "minInclusive":
+			s := el.Attr("", "value")
+			if strings.Contains(s, "-") {
+				return
+			}
 			// NOTE(droyo) min/max is also valid in XSD for
 			// dateTime elements. Currently, such an XSD will
 			// cause an error here.
 			r.Min = parseDecimal(el.Attr("", "value"))
 		case "maxExclusive", "maxInclusive":
+			s := el.Attr("", "value")
+			if strings.Contains(s, "-") {
+				return
+			}
 			r.Max = parseDecimal(el.Attr("", "value"))
 		case "length":
 			r.MaxLength = parseInt(el.Attr("", "value"))
